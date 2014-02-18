@@ -59,7 +59,8 @@ class ZkClient(object):
         zk_client = ZkClient.GetInstance('127.0.0.1:2181')
         ...
         Please Be careful to use ZkClient.Close()
-        if call Close()
+        when you close zk_client by calling zk_client.Close()
+        you can also get a new zk_client with the same zk_address by calling ZkClient.GetInstance('127.0.0.1')
     '''
     # host such as '127.0.0.1:2181' or '192.168.20.1:2181,192.168.20.2:2181'
     def __init__(self, host, zk_log_path=None):

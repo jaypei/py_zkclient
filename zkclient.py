@@ -52,6 +52,15 @@ class NodeChildrenListener(Listener):
 # TODO: ZkClient singleton? like tornado impl.
 # TODO: Do I need that? Take it into consideration
 class ZkClient(object):
+    '''
+    usage:
+        zk_client = ZkClient.GetInstance('127.0.0.1:2181', '/tmp/zk/log')
+        also without the second log path argument
+        zk_client = ZkClient.GetInstance('127.0.0.1:2181')
+        ...
+        Please Be careful to use ZkClient.Close()
+        if call Close()
+    '''
     # host such as '127.0.0.1:2181' or '192.168.20.1:2181,192.168.20.2:2181'
     def __init__(self, host, zk_log_path=None):
         self.cv = threading.Condition()
@@ -179,6 +188,13 @@ class ZkClient(object):
             zookeeper.close(self.handle)
         finally:
             self.cv.release()
+            #remove from __zk_client_dict
+        ZkClient.__zk_client_dict_lock.acquire()
+        try:
+            if self.host in ZkClient.__zk_client_dict:
+                del ZkClient.__zk_client_dict[self.host]
+        finally:
+            ZkClient.__zk_client_dict_lock.release()
 
 
     def AddNodeDataListener(self, listener):
@@ -427,13 +443,18 @@ if __name__ == '__main__':
     # print zk_client.Create(path, '123', zookeeper.EPHEMERAL)
     # print zk_client.Exist(path, True)
     # print zk_client.Delete(path)
-    #print zk_client.GetChildren("/test13", False)
+    # print zk_client.GetChildren("/test13", False)
     # zk_client.Close()
     # zk_client = ZkClient.GetInstance('127.0.0.1:2181')
+    # print zk_client.GetChildren('/', True)
+    # time.sleep(2)
+    # zk_client.Close()
+    # time.sleep(2)
+    # zk_client = ZkClient.GetInstance('127.0.0.1:2181')
+    # print zk_client.GetChildren('/', True)
     # print '%x' % zk_client.__hash__()
     # print ZkClient.GetInstance('127.0.0.1:2181')
     # print '%x' % ZkClient.GetInstance('l-agdb1.dba.dev.cn6.qunar.com:2181').__hash__()
-    # print zk_client.GetChildren('/', False)
     time.sleep(3)
 
 

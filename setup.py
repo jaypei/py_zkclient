@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='zkclient',
-    version='1.1',
+    version='1.2',
     packages=[''],
     url='https://github.com/airhuman/py_zkclient.git',
     license='',
